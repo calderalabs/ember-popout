@@ -15,8 +15,11 @@ actions: {
   },
   
   sendMessage: function(message) {
-    message.saveRecord();
-    this.get('popup').send('loadMessage', message.serialize());
+    if (this.get('postmessage.parent')) {
+      this.get('postmessage.parent').send('sendMessage', message.serialize());
+    } else {
+      this.get('popup').send('loadMessage', message.serialize());
+    }
   }
 }
 ```
@@ -26,6 +29,10 @@ actions: {
 actions: {
   loadMessage: function(message) {
     this.get('store').createRecord('message', message);
+  },
+  
+  sendMessage: function(message) {
+    message.saveRecord();
   }
 }
 ```
