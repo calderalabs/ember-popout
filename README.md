@@ -11,7 +11,7 @@ popup: null,
 
 actions: {
   popOut: function() {
-    this.set('popup', this.get('postmessage').open('conversations', this.get('conversation.id'));
+    this.set('popup', this.get('postmessage').openPopup('conversations', this.get('conversation.id'));
   },
   
   sendMessage: function(message) {
