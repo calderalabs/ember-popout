@@ -16,7 +16,7 @@ actions: {
   
   sendMessage: function(message) {
     message.saveRecord();
-    this.get('popup').loadMessage(message.serialize());
+    this.get('popup').send('loadMessage', message.serialize());
   }
 }
 ```
