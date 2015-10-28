@@ -1,24 +1,36 @@
-# ember-postmessage
+# ember-popout
 
 ## How to use
 
-- ember install ember-postmessage
+- ember install ember-popout
 
 ```javascript
 // components/ede-conversation.js
-postmessage: Ember.service.inject('ember-postmessage'),
-popup: null,
+import Ember from 'ember';
 
-actions: {
-  popOut: function() {
-    this.set('popup', this.get('postmessage').openPopup('conversations', this.get('conversation.id'));
-  },
+export default Ember.Component.extend({
+  popout: Ember.service.inject('ember-popout'),
+  popup: null,
   
-  sendMessage: function(message) {
-    if (this.get('postmessage.parent')) {
-      this.get('postmessage.parent').send('sendMessage', message.serialize());
-    } else {
-      this.get('popup').send('loadMessage', message.serialize());
+  actions: {
+    popOut: function() {
+      this.set('popup', this.get('popout').openPopup('conversations', this.get('conversation.id'));
+    },
+    
+    sendMessage: function(message) {
+      let parent = this.get('popout.parent');
+      
+      if (parent != null) {
+        parent.sendAction('sendMessage', message);
+      } else {
+        let popup = this.get('popup');
+        
+        this.sendAction('sendMessage', message);
+        
+        if (popup != null) {
+          popup.sendAction('reloadConversation', this.get('conversation'));
+        }
+      }
     }
   }
 }
@@ -26,13 +38,18 @@ actions: {
 
 ```javascript
 // routes/conversations.js
-actions: {
-  loadMessage: function(message) {
-    this.get('store').createRecord('message', message);
-  },
-  
-  sendMessage: function(message) {
-    message.saveRecord();
+import Ember from 'ember';
+import PopoutRouteMixin from 'ember-popout/mixins/route';
+
+export default Ember.Route.extend(PopoutRouteMixin, {
+  actions: {
+    reloadConversation: function(conversation) {
+      this.get('conversations').findBy('id', conversation.get('id')).reload();
+    },
+    
+    sendMessage: function(message) {
+      message.saveRecord();
+    }
   }
-}
+});
 ```
