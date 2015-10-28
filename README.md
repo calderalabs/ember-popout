@@ -14,22 +14,18 @@ export default Ember.Component.extend({
   
   actions: {
     popOut: function() {
-      this.set('popup', this.get('popout').openPopup('conversations', this.get('conversation.id'));
+      this.set('popup', this.get('popout').open('conversations', this.get('conversation.id'));
     },
     
     sendMessage: function(message) {
+      let popup = this.get('popup');
       let parent = this.get('popout.parent');
+      let conversation = this.get('conversation');
       
       if (parent != null) {
-        parent.sendAction('sendMessage', message);
+        parent.sendAction('sendMessage', message, conversation, popup);
       } else {
-        let popup = this.get('popup');
-        
-        this.sendAction('sendMessage', message);
-        
-        if (popup != null) {
-          popup.sendAction('reloadConversation', this.get('conversation'));
-        }
+        this.sendAction('sendMessage', message, conversation, popup);
       }
     }
   }
@@ -47,8 +43,12 @@ export default Ember.Route.extend(PopoutRouteMixin, {
       this.get('conversations').findBy('id', conversation.get('id')).reload();
     },
     
-    sendMessage: function(message) {
+    sendMessage: function(message, conversation, popup) {
       message.saveRecord();
+      
+      if (popup != null) {
+        popup.sendAction('reloadConversation', conversation);
+      }
     }
   }
 });
