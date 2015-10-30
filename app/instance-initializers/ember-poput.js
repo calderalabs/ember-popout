@@ -1,6 +1,5 @@
 import Ember from 'ember';
 
-
 export function initialize(application) {
   let event = new CustomEvent('ember-popout:initialize', {
     detail: { application }
