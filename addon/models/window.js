@@ -6,10 +6,12 @@ const { run, merge, computed, RSVP } = Ember;
 
 export default Ember.Object.extend(Ember.Evented, {
   mergedProperties: ['options'],
-  reference: null,
-  application: null,
-  router: null,
-  popout: null,
+
+  _reference: null,
+  _application: null,
+  _router: null,
+  _popout: null,
+
   url: window.location.origin,
 
   id: computed(function() {
@@ -19,6 +21,13 @@ export default Ember.Object.extend(Ember.Evented, {
   options: {
     width: 500,
     height: 500
+  },
+
+  _initializeLookups() {
+    let container = this.get('_application.container');
+
+    this.set('_router', container.lookup('router:main'));
+    this.set('_popout', container.lookup('service:ember-popout'));
   },
 
   open() {
@@ -36,38 +45,40 @@ export default Ember.Object.extend(Ember.Evented, {
       stringifyOptions(mergedOptions)
     );
 
-    this.set('reference', reference);
+    this.set('_reference', reference);
 
-    return new RSVP.Promise((resolve, _) => {
+    return new RSVP.Promise((resolve) => {
       reference.addEventListener('ember-popout:initialize', (event) => {
         run(this, function() {
-          this.set('application', event.detail.application);
-          this.initializeLookups();
+          this.set('_application', event.detail.application);
+          this._initializeLookups();
           resolve();
         });
       });
 
-      reference.addEventListener('unload', (event) => {
+      reference.addEventListener('unload', () => {
         this.trigger('close');
       });
     });
   },
 
   close() {
-    this.get('reference').close();
-  },
+    let reference = this.get('_reference');
 
-  initializeLookups() {
-    let container = this.get('application.container');
-    this.set('router', container.lookup('router:main'));
-    this.set('popout', container.lookup('service:ember-popout'));
+    if (reference != null) {
+      reference.close();
+    }
   },
 
   sendAction(...args) {
-    this.send(`route:${this.get('router.currentRouteName')}`, ...args);
+    this.send(`route:${this.get('_router.currentRouteName')}`, ...args);
   },
 
   send(channel, ...args) {
-    this.get('popout').trigger(channel, ...args);
+    let popout = this.get('_popout');
+
+    if (popout != null) {
+      this.get('_popout').trigger(channel, ...args);
+    }
   }
 });
