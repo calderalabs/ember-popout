@@ -4,7 +4,7 @@ import stringifyOptions from 'ember-popout/lib/stringify-options';
 
 const { run, merge, computed, RSVP } = Ember;
 
-export default Ember.Object.extend(Ember.Evented, {
+export default Ember.Object.extend({
   mergedProperties: ['options'],
 
   _reference: null,
@@ -12,6 +12,7 @@ export default Ember.Object.extend(Ember.Evented, {
   _router: null,
   _popout: null,
 
+  isOpen: false,
   url: window.location.origin,
 
   id: computed(function() {
@@ -52,12 +53,13 @@ export default Ember.Object.extend(Ember.Evented, {
         run(this, function() {
           this.set('_application', event.detail.application);
           this._initializeLookups();
+          this.set('isOpen', true);
           resolve();
         });
       });
 
       reference.addEventListener('unload', () => {
-        this.trigger('close');
+        this.set('isOpen', false);
       });
     });
   },

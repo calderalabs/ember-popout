@@ -3,25 +3,20 @@ import Ember from 'ember';
 const { inject } = Ember;
 
 export default Ember.Controller.extend({
-  popout: inject.service('ember-popout'),
+  _popout: inject.service('ember-popout'),
+  popout: null,
 
   actions: {
     popout() {
-      this.get('popout').open('alerts').then((receiver) => {
-        this.set('receiver', receiver);
-
-        receiver.on('close', () => {
-          this.set('receiver', null);
-        });
-      });
+      this.set('popout', this.get('_popout').open('alerts'));
     },
 
     close() {
-      this.get('receiver').close();
+      this.get('popout').close();
     },
 
     sendAlert() {
-      this.get('receiver').sendAction('alert', 'Hey there!');
+      this.get('popout').sendAction('alert', 'Hey there!');
     }
   }
 });
