@@ -2,7 +2,7 @@ import Ember from 'ember';
 import generateUuid from 'ember-popout/lib/generate-uuid';
 import stringifyOptions from 'ember-popout/lib/stringify-options';
 
-const { on, observer, run, merge, computed, RSVP } = Ember;
+const { run, merge, computed, RSVP } = Ember;
 
 export default Ember.Object.extend({
   mergedProperties: ['options'],
@@ -10,6 +10,7 @@ export default Ember.Object.extend({
   application: null,
   router: null,
   popout: null,
+  url: window.location.origin,
 
   id: computed(function() {
     return generateUuid();
@@ -19,15 +20,6 @@ export default Ember.Object.extend({
     width: 500,
     height: 500
   },
-
-  initializeLookups: on('init', observer('application', function() {
-    let application = this.get('application');
-
-    if (application != null) {
-      this.set('router', application.container.lookup('router:main'));
-      this.set('popout', application.container.lookup('service:ember-popout'));
-    }
-  })),
 
   open() {
     let options = this.get('options');
@@ -39,23 +31,28 @@ export default Ember.Object.extend({
     }, options);
 
     reference = window.open(
-      window.location.origin,
+      this.get('url'),
       this.get('id'),
       stringifyOptions(mergedOptions)
     );
+
+    this.set('reference', reference);
 
     return new RSVP.Promise((resolve, _) => {
       reference.addEventListener('ember-popout:initialize', (event) => {
         run(this, function() {
           this.set('application', event.detail.application);
-          run.next(resolve);
+          this.initializeLookups();
+          resolve();
         });
       });
     });
   },
 
-  transitionTo(...args) {
-    this.get('router').transitionTo(...args);
+  initializeLookups() {
+    let application = this.get('application');
+    this.set('router', application.container.lookup('router:main'));
+    this.set('popout', application.container.lookup('service:ember-popout'));
   },
 
   sendAction(...args) {

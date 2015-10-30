@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import Window from 'ember-popout/models/window';
 
-const { typeOf, isPresent } = Ember;
+const { typeOf, merge, inject } = Ember;
 
 export default Ember.Service.extend(Ember.Evented, {
   open(...args) {
@@ -13,13 +13,11 @@ export default Ember.Service.extend(Ember.Evented, {
       args.pop();
     }
 
-    let context = Window.create(options);
+    let context = Window.create(merge({
+      url: this.get('container').lookup('router:main').generate(...args)
+    }, options));
 
     return context.open().then(function() {
-      if (isPresent(args)) {
-        return context.transitionTo(...args);
-      }
-    }).then(function() {
       return context;
     });
   }
