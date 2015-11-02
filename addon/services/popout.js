@@ -15,7 +15,7 @@ export default Ember.Service.extend(Ember.Evented, {
 
     let context = Context.create(merge({
       url: this.get('container').lookup('router:main').generate(...args)
-    }, options));
+    }, {options: options}));
 
     context.open();
     return context;
