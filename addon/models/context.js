@@ -38,6 +38,11 @@ export default Ember.Object.extend({
   _application: null,
 
   /**
+   * A reference to the current application instance's ember-popout service
+   */
+  _service: undefined,
+
+  /**
    * A reference to the router of the application instance in the popout window.
    * @property _router
    * @private
@@ -105,6 +110,7 @@ export default Ember.Object.extend({
           this.set('_application', event.detail.application);
           this._initializeLookups();
           this.set('isOpen', true);
+          this.send('_setParent', this.get('_service'));
           resolve();
         });
       });
