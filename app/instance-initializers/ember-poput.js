@@ -11,7 +11,8 @@ export function initialize(application) {
   service.set('_self', application);
   let initialized = false;
   // parent needs to send an event first
-  window.addEventListener('ember-popout:init-from-parent', (e) => {
+  window.addEventListener('ember-popout:init-from-parent', (evt) => {
+    service.set('_parent', evt.detail.service);
     // since parent can be sending more than one event,
     // we send an acknowledgement only once
     if (!initialized) {

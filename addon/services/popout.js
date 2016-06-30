@@ -3,8 +3,7 @@ import Context from 'ember-popout/models/context';
 
 const {
   typeOf,
-  merge,
-  on
+  merge
 } = Ember;
 
 export default Ember.Service.extend(Ember.Evented, {
@@ -17,20 +16,13 @@ export default Ember.Service.extend(Ember.Evented, {
 
   /**
    * A reference to the application instance in the parent window
-   * if the current window is a popout window
+   * if the current window is a popout window.
+   * this is set in the instance-initializer
    * @property parent
    * @private
    * @default null
    */
   _parent: null,
-
-  /**
-   * @method _initializeParent
-   * @private
-   */
-  _initializeParent: on('_setParent', function(parent) {
-    this.set('_parent', parent);
-  }),
 
   open(...args) {
     let options;

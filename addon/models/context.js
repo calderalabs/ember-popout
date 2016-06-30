@@ -116,7 +116,6 @@ export default Ember.Object.extend({
             this.set('_application', event.detail.application);
             this._initializeLookups();
             this.set('isOpen', true);
-            this.send('_setParent', this.get('_service'));
             resolve2();
           });
         });
