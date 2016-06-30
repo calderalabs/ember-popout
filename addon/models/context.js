@@ -1,5 +1,6 @@
 import Ember from 'ember';
 import generateUuid from 'ember-popout/lib/generate-uuid';
+import generateCustomEvent from 'ember-popout/lib/generate-custom-event';
 import stringifyOptions from 'ember-popout/lib/stringify-options';
 
 const { run, merge, computed, RSVP } = Ember;
@@ -105,18 +106,29 @@ export default Ember.Object.extend({
     this.set('_reference', reference);
 
     return new RSVP.Promise((resolve) => {
-      reference.addEventListener('ember-popout:initialize', (event) => {
-        run(this, function() {
-          this.set('_application', event.detail.application);
-          this._initializeLookups();
-          this.set('isOpen', true);
-          this.send('_setParent', this.get('_service'));
-          resolve();
+      run.later(null, resolve, 250); // wait until reference is loaded properly on IE11
+    }).then(() => {
+      // now reference should have methods addEventListener and dispatchEvent even on IE11
+      return new RSVP.Promise((resolve2) => {
+        // listen for child to send back event
+        reference.addEventListener('ember-popout:initialize', (event) => {
+          run(this, function() {
+            this.set('_application', event.detail.application);
+            this._initializeLookups();
+            this.set('isOpen', true);
+            this.send('_setParent', this.get('_service'));
+            resolve2();
+          });
         });
-      });
 
-      reference.addEventListener('unload', () => {
-        this.set('isOpen', false);
+        // listen to child window close event
+        reference.addEventListener('unload', () => {
+          this.set('isOpen', false);
+        });
+
+        // send an event to the child
+        let event = generateCustomEvent('ember-popout:init-from-parent', { service: this.get('_service')}, reference);
+        reference.dispatchEvent(event);
       });
     });
   },
