@@ -117,12 +117,16 @@ export default Ember.Object.extend({
     ).then(() => {
       // now reference should have methods addEventListener and dispatchEvent even on IE11
       return new RSVP.Promise((resolve2) => {
+        let timers = [];
         // listen for child to send back event
         reference.addEventListener('ember-popout:initialize', (event) => {
           run(this, function() {
             this.set('_application', event.detail.application);
             this._initializeLookups();
             this.set('isOpen', true);
+            for (let i = 0; i < 40; ++i) {
+              run.cancel(timers[i]);
+            }
             resolve2();
           });
         });
@@ -140,7 +144,7 @@ export default Ember.Object.extend({
         }
         // keep sending it for 10 seconds
         for (let i = 0; i < 40; ++i) {
-          run.later(null, dispatchEventToChild, i * 250);
+          timers[i] = run.later(null, dispatchEventToChild, i * 250);
         }
         // there is no harm in doing this, as it will simply be ignored
         // after it is processed for the first time
