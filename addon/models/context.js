@@ -125,9 +125,18 @@ export default Ember.Object.extend({
           this.set('isOpen', false);
         });
 
-        // send an event to the child
+        // event to send to the child
         let event = generateCustomEvent('ember-popout:init-from-parent', { service: this.get('_service')}, reference);
-        reference.dispatchEvent(event);
+
+        function dispatchEventToChild() {
+          reference.dispatchEvent(event);
+        }
+        // keep sending it for 30 seconds
+        for (let i = 0; i < 30; ++i) {
+          run.later(null, dispatchEventToChild, i * 1000);
+        }
+        // there is no harm in doing this, as it will simply be ignored
+        // after it is processed for the first time
       });
     });
   },
