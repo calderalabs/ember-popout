@@ -1,6 +1,7 @@
 import Ember from 'ember';
 import generateUuid from 'ember-popout/lib/generate-uuid';
 import generateCustomEvent from 'ember-popout/lib/generate-custom-event';
+import waitForCondition from 'ember-popout/lib/wait-for-condition';
 import stringifyOptions from 'ember-popout/lib/stringify-options';
 
 const { run, merge, computed, RSVP } = Ember;
@@ -105,9 +106,15 @@ export default Ember.Object.extend({
 
     this.set('_reference', reference);
 
-    return new RSVP.Promise((resolve) => {
-      run.later(null, resolve, 250); // wait until reference is loaded properly on IE11
-    }).then(() => {
+    function referenceHasLoaded() {
+      return Ember.isPresent(reference.addEventListener);
+    }
+
+    waitForCondition(  // wait until reference is loaded properly on IE11
+      referenceHasLoaded,
+      250,
+      1000
+    ).then(() => {
       // now reference should have methods addEventListener and dispatchEvent even on IE11
       return new RSVP.Promise((resolve2) => {
         // listen for child to send back event
@@ -131,9 +138,9 @@ export default Ember.Object.extend({
         function dispatchEventToChild() {
           reference.dispatchEvent(event);
         }
-        // keep sending it for 30 seconds
-        for (let i = 0; i < 30; ++i) {
-          run.later(null, dispatchEventToChild, i * 1000);
+        // keep sending it for 10 seconds
+        for (let i = 0; i < 40; ++i) {
+          run.later(null, dispatchEventToChild, i * 250);
         }
         // there is no harm in doing this, as it will simply be ignored
         // after it is processed for the first time
