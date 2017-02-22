@@ -7,9 +7,11 @@ export default Ember.Service.extend({
 
   popouts: undefined,
 
+  popoutNames: undefined,
+
   init(...args) {
     this._super(...args);
-    this.set('popouts', {});
+    this._resetPopouts();
     this.set('actionListeners', Ember.A());
     let { location: { href, pathname } } = window;
     let parent = href.slice(0, href.search(pathname));
@@ -48,26 +50,32 @@ export default Ember.Service.extend({
 
     let reference = window.open(url, id, stringifyOptions(mergedOptions));
 
-    let popouts = this.get('popouts');
+    const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
 
     this.popouts[id] = reference;
+    this.popoutNames.pushObject(id);
   },
 
   close(id) {
-    let popouts = this.get('popouts');
-    let popout = popouts[id];
+    const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
+    const popout = popouts[id];
     _closeWindow(popout);
     delete popouts.id;
+    popoutNames.removeObject(id);
   },
 
   closeAll() {
-    let popouts = this.get('popouts');
-    Object.keys(popouts).forEach(function(id) {
-      let popout = popouts[id];
-      _closeWindow(popout);
-    });
-    this.set('popouts', {});
+    const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
+    popoutNames.forEach(id => _closeWindow(popouts[id]));
+    this._resetPopouts();
   },
+
+  _resetPopouts() {
+    this.setProperties({
+      popouts: {},
+      popoutNames: Ember.A()
+    });
+  }
 });
 
 function _closeWindow(win) {
