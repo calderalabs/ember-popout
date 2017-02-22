@@ -11,6 +11,9 @@ export default Ember.Service.extend({
     this._super(...args);
     this.set('popouts', {});
     this.set('actionListeners', Ember.A());
+    let { location: { href, pathname } } = window;
+    let parent = href.slice(0, href.search(pathname));
+    this.get('windowMessengerServer').set('targetOriginMap', { parent });
     this.get('windowMessengerServer').on('receive-action', (resolve, reject, { name, args }) => {
       resolve(); // always resolve - it's the receivers responsibility to process the action
       let actionListeners = this.get('actionListeners');
