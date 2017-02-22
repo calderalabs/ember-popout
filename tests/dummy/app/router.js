@@ -8,6 +8,7 @@ const Router = Ember.Router.extend({
 
 Router.map(function() {
   this.route('alerts');
+  this.route('old');
 });
 
 export default Router;
