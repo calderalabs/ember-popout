@@ -1,0 +1,11 @@
+<button {{action "openPopout"}}>Open New Popout</button>
+<br/>
+
+{{#each popouts as |popout|}}
+  <button {{action "closePopout" popout}}>Close Popout {{popout}}</button>
+  <br/>
+{{/each}}
+
+{{#if popoutsNotEmpty}}
+  <button {{action "closeAllPopouts"}}>Close All Popouts</button>
+{{/if}}
