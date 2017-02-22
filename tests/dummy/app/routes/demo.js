@@ -3,7 +3,13 @@ import Ember from 'ember';
 let _globalId = 1;
 
 export default Ember.Route.extend({
+
   popoutParent: Ember.inject.service(),
+
+  init(...args) {
+    this._super(...args);
+    this.get('popoutParent').listenToActions(this);
+  },
 
   setupController(controller) {
     controller.set('popouts', Ember.A());
@@ -15,7 +21,7 @@ export default Ember.Route.extend({
   actions: {
 
     openPopout() {
-      this.get('popoutParent').open(_globalId, 'alerts');
+      this.get('popoutParent').open(_globalId, 'popout');
       this.controller.get('popouts').pushObject(_globalId);
       _globalId++;
     },
@@ -29,5 +35,9 @@ export default Ember.Route.extend({
       this.get('popoutParent').closeAll();
       this.controller.set('popouts', Ember.A());
     },
+
+    writeHello(name) {
+      console.log('Hello, ' + name);
+    }
   }
 });

@@ -3,11 +3,26 @@ import stringifyOptions from 'ember-popout/lib/stringify-options';
 
 export default Ember.Service.extend({
 
+  windowMessengerServer: Ember.inject.service(),
+
   popouts: undefined,
 
   init(...args) {
     this._super(...args);
     this.set('popouts', {});
+    this.set('actionListeners', Ember.A());
+    this.get('windowMessengerServer').on('receive-action', (resolve, reject, { name, args }) => {
+      resolve(); // always resolve - it's the receivers responsibility to process the action
+      let actionListeners = this.get('actionListeners');
+      actionListeners.forEach((listener) => {
+        listener.send(name, ...args);
+      });
+    });
+  },
+
+  listenToActions(target) {
+    let actionListeners = this.get('actionListeners');
+    actionListeners.pushObject(target);
   },
 
   open(id, ...args) {
