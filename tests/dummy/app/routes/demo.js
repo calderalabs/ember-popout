@@ -1,15 +1,9 @@
 import Ember from 'ember';
+import PopoutParentRouteMixin  from 'ember-popout/mixins/popout-parent-route'
 
 let _globalId = 1;
 
-export default Ember.Route.extend({
-
-  popoutParent: Ember.inject.service(),
-
-  init(...args) {
-    this._super(...args);
-    this.get('popoutParent').listenToActions(this);
-  },
+export default Ember.Route.extend(PopoutParentRouteMixin, {
 
   setupController(controller) {
     controller.set('popouts', Ember.A());
