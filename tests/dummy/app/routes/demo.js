@@ -30,8 +30,8 @@ export default Ember.Route.extend(PopoutParentRouteMixin, {
       this.controller.set('popouts', Ember.A());
     },
 
-    writeHello(name) {
-      console.log('Hello, ' + name);
+    writeHello(...args) {
+      console.log('Hello,', ...args);
     }
   }
 });

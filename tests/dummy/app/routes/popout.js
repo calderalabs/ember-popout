@@ -1,11 +1,15 @@
 import Ember from 'ember';
+import PopoutChildRouteMixin  from 'ember-popout/mixins/popout-child-route'
 
-export default Ember.Route.extend({
-  popoutChild: Ember.inject.service(),
+export default Ember.Route.extend(PopoutChildRouteMixin, {
+
+  parentActions: [
+    'writeHello'
+  ],
 
   actions: {
-    writeHello() {
-      this.get('popoutChild').sendAction('writeHello', 'from me');
+    writeGoodbye(fromWho) {
+      this.get('popoutChild').sendAction('writeHello', fromWho, 'and good bye');
     }
   }
 });
