@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import PopoutParentRouteMixin  from 'ember-popout/mixins/popout-parent-route'
+import PopoutParentRouteMixin  from 'ember-popout/mixins/popout-parent-route';
 
 let _globalId = 1;
 

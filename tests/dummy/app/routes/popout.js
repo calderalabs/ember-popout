@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import PopoutChildRouteMixin  from 'ember-popout/mixins/popout-child-route'
+import PopoutChildRouteMixin  from 'ember-popout/mixins/popout-child-route';
 
 export default Ember.Route.extend(PopoutChildRouteMixin, {
 
@@ -9,7 +9,6 @@ export default Ember.Route.extend(PopoutChildRouteMixin, {
 
   actions: {
     writeGoodbye(fromWho) {
-      // this.get('popoutChild.windowMessengerClient').rpc('closing');
       this.get('popoutChild').sendAction('writeHello', fromWho, 'and good bye');
     }
   }

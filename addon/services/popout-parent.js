@@ -61,7 +61,7 @@ export default Ember.Service.extend({
         delete popouts[id];
         popoutNames.removeObject(id);
       });
-    }
+    };
   },
 
   close(id) {
