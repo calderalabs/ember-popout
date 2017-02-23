@@ -7,8 +7,6 @@ const Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('alerts');
-  this.route('old');
   this.route('demo');
   this.route('popout');
 });
