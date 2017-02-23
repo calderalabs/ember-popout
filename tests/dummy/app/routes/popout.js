@@ -9,6 +9,7 @@ export default Ember.Route.extend(PopoutChildRouteMixin, {
 
   actions: {
     writeGoodbye(fromWho) {
+      // this.get('popoutChild.windowMessengerClient').rpc('closing');
       this.get('popoutChild').sendAction('writeHello', fromWho, 'and good bye');
     }
   }

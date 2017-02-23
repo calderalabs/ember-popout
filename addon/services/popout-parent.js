@@ -16,6 +16,7 @@ export default Ember.Service.extend({
     let { location: { href, pathname } } = window;
     let parent = href.slice(0, href.search(pathname));
     this.get('windowMessengerServer').set('targetOriginMap', { parent });
+
     this.get('windowMessengerServer').on('receive-action', (resolve, reject, { name, args }) => {
       resolve(); // always resolve - it's the receivers responsibility to process the action
       let actionListeners = this.get('actionListeners');
@@ -52,15 +53,22 @@ export default Ember.Service.extend({
 
     const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
 
-    this.popouts[id] = reference;
-    this.popoutNames.pushObject(id);
+    popouts[id] = reference;
+    popoutNames.pushObject(id);
+
+    reference.onunload = function() {
+      Ember.run(function() {
+        delete popouts[id];
+        popoutNames.removeObject(id);
+      });
+    }
   },
 
   close(id) {
     const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
     const popout = popouts[id];
     _closeWindow(popout);
-    delete popouts.id;
+    delete popouts[id];
     popoutNames.removeObject(id);
   },
 
