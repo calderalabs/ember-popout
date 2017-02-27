@@ -6,12 +6,16 @@
     "ember-addon"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "eugeniodepalo",
+  "contributors": [
+    "eugeniodepalo",
+    "akatov"
+  ],
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "eugeniodepalo/ember-popout",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
