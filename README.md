@@ -61,11 +61,8 @@ export default Ember.Route.extend(PopoutParentRouteMixin, {
 ```js
 import PopoutChildRouteMixin  from 'ember-popout/mixins/popout-child-route';
 let ParentRoute = Ember.Route.extend(PopoutChildRouteMixin, {
-  actions: {
-    parentActions: ['writeHello']
-  }
+  parentActions: ['writeHello']
 });
-
 ```
 
 ### `app/templates/popout.hbs`
