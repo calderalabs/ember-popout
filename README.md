@@ -4,26 +4,73 @@
 [![Ember Observer Score](http://emberobserver.com/badges/ember-popout.svg)](http://emberobserver.com/addons/ember-popout)
 [![Ember badge](http://embadge.io/v1/badge.svg?start=1.0.0)](http://embadge.io/)
 
-Ember Service for managing popout windows
+Simple popout window management.
+One parent route can open several child popout routes.
+Actions from the child popout routes can be propagated to the parent route.
 
 ## Installation
 
-* `git clone` this repository
-* `npm install`
-* `bower install`
+* `ember install ember-popout`
 
-## Running
+## Usage
 
-* `ember server`
-* Visit your app at http://localhost:4200.
+### `app/router.js`
 
-## Running Tests
+```js
+import Ember from 'ember';
+let Router = Ember.Router.extend();
+Router.map(function() {
+  this.route('parent');
+  this.route('popout');
+});
+export default Router;
+```
 
-* `ember test`
-* `ember test --server`
+### `app/routes/parent.js`
+```js
+import PopoutParentRouteMixin  from 'ember-popout/mixins/popout-parent-route';
+import Ember from 'ember';
+export default Ember.Route.extend(PopoutParentRouteMixin, {
+  actions: {
+    openPopout() {
+      // first argument is an id used later for popout manipulation
+      // second argument is the path for the popout
+      // option argument is stringified and passed on to `window.open`
+      this.get('popoutParent').open(1, 'popout', {
+        left: _globalId * 10,
+        top: _globalId * 10,
+        width: 300,
+        height: 300,
+        scrollbars: 0,
+        resizable: 0,
+      });
+    },
+    writeHello(name) {
+      console.log('hello, ' + name);
+    }
+  }
+});
+```
 
-## Building
+### `app/templates/parent.hbs`
+```hbs
+<button {{action "openPopout"}}>Open Popout</button>
+```
 
-* `ember build`
+### `app/routes/popout.js`
+```js
+import PopoutChildRouteMixin  from 'ember-popout/mixins/popout-child-route';
+let ParentRoute = Ember.Route.extend(PopoutChildRouteMixin, {
+  actions: {
+    parentActions: ['writeHello']
+  }
+});
 
-For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
+```
+
+### `app/templates/popout.hbs`
+```hbs
+<button {{action "writeHello" "friend"}}>Print to console in parent window</button>
+```
+
+Clicking the button will print "hello, friend" to the parent window's console.
