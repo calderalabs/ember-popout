@@ -1,8 +1,8 @@
 # ember-popout
 
+[![Build Status](https://travis-ci.org/eugeniodepalo/ember-popout.svg?branch=master)](https://travis-ci.org/eugeniodepalo/ember-popout)
 [![npm Version](https://img.shields.io/npm/v/ember-popout.svg?style=flat-square)](https://www.npmjs.org/package/ember-popout)
 [![Ember Observer Score](http://emberobserver.com/badges/ember-popout.svg)](http://emberobserver.com/addons/ember-popout)
-[![Ember badge](http://embadge.io/v1/badge.svg?start=1.0.0)](http://embadge.io/)
 
 Simple popout window management.
 One parent route can open several child popout routes.
