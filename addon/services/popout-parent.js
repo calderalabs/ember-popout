@@ -53,15 +53,18 @@ export default Ember.Service.extend({
 
     const { popouts, popoutNames } = this.getProperties('popouts', 'popoutNames');
 
-    popouts[id] = reference;
-    popoutNames.pushObject(id);
+    if (reference) {
+      popouts[id] = reference;
+      popoutNames.pushObject(id);
 
-    reference.onunload = function() {
-      Ember.run(function() {
-        delete popouts[id];
-        popoutNames.removeObject(id);
-      });
-    };
+      reference.onunload = function() {
+        Ember.run(function() {
+          delete popouts[id];
+          popoutNames.removeObject(id);
+        });
+      };
+    }
+
     return reference;
   },
 
