@@ -1,4 +1,5 @@
 import Ember from 'ember';
+import locationOrigin from 'ember-popout/utils/location-origin';
 
 export default Ember.Service.extend({
 
@@ -6,8 +7,7 @@ export default Ember.Service.extend({
 
   init(...args) {
     this._super(...args);
-    let { location: { href, pathname } } = window;
-    let parent = href.slice(0, href.search(pathname));
+    let parent = locationOrigin();
     this.get('windowMessengerClient').set('targetOriginMap', { parent });
   },
 

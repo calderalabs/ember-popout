@@ -1,5 +1,6 @@
 import Ember from 'ember';
-import stringifyOptions from 'ember-popout/lib/stringify-options';
+import stringifyOptions from 'ember-popout/utils/stringify-options';
+import locationOrigin from 'ember-popout/utils/location-origin';
 
 export default Ember.Service.extend({
 
@@ -13,10 +14,8 @@ export default Ember.Service.extend({
     this._super(...args);
     this._resetPopouts();
     this.set('actionListeners', Ember.A());
-    let { location: { href, pathname } } = window;
-    let parent = href.slice(0, href.search(pathname));
+    let parent = locationOrigin();
     this.get('windowMessengerServer').set('targetOriginMap', { parent });
-
     this.get('windowMessengerServer').on('receive-action', (resolve, reject, { name, args }) => {
       resolve(); // always resolve - it's the receivers responsibility to process the action
       let actionListeners = this.get('actionListeners');
