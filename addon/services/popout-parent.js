@@ -1,5 +1,5 @@
 import Ember from 'ember';
-import stringifyOptions from 'ember-popout/lib/stringify-options';
+import stringifyOptions from 'ember-popout/utils/stringify-options';
 
 export default Ember.Service.extend({
 
