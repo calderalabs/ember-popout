@@ -57,10 +57,12 @@ export default Ember.Service.extend({
       popoutNames.pushObject(id);
 
       reference.onunload = function() {
-        Ember.run(function() {
-          delete popouts[id];
-          popoutNames.removeObject(id);
-        });
+        if (reference.location.href !== 'about:blank') {
+          Ember.run(function() {
+            delete popouts[id];
+            popoutNames.removeObject(id);
+          });
+        }
       };
     }
 
